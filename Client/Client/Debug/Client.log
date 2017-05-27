@@ -1,0 +1,14 @@
+﻿生成启动时间为 2017/5/26 11:26:44。
+     1>项目“G:\FromZero\Server\Client\Client\Client.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         D:\Embedded_Development\VS2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\Client.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Client.cpp
+         Client.cpp
+       Link:
+         D:\Embedded_Development\VS2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"G:\FromZero\Server\Client\Debug\Client.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"G:\FromZero\Server\Client\Debug\Client.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"G:\FromZero\Server\Client\Debug\Client.lib" /MACHINE:X86 Debug\Client.obj
+         Debug\stdafx.obj
+         Client.vcxproj -> G:\FromZero\Server\Client\Debug\Client.exe
+     1>已完成生成项目“G:\FromZero\Server\Client\Client\Client.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:03.05
