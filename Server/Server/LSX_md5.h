@@ -16,8 +16,6 @@
 #include <string>
 #include <iostream>
 
-
-
 class MD5
 {
 public:
@@ -31,6 +29,11 @@ public:
 	std::string hexdigest() const;
 	std::string md5() const;
 	//friend std::ostream& operator<<(std::ostream&, MD5 md5);
+	char * getResult()
+	{
+		printf("XXXXXXXXX:%02x",digest[0]);
+		return (char*)digest;
+	}
 
 private:
 	void init();

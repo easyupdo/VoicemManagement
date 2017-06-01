@@ -333,11 +333,11 @@ std::string MD5::hexdigest() const
 
 	char buf[33];
 	for (int i = 0; i<16; i++)
-		sprintf(buf + i * 2, "%02x", digest[i]);
+		sprintf(buf + i * 2, "%02x", digest[i]);//将16Byte的16进制的摘要转为字符串输出
 	buf[32] = 0;
-
 	return std::string(buf);
 }
+
 std::string MD5::md5() const
 {
 	return hexdigest();

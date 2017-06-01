@@ -38,10 +38,10 @@
     <ClCompile Include="LSX_md5.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="LSX_Server.cpp">
+    <ClCompile Include="LSX_Socket.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="LSX_Socket.cpp">
+    <ClCompile Include="LSX_Server_Main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

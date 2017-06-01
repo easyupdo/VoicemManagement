@@ -87,7 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LSX_md5.cpp" />
-    <ClCompile Include="LSX_Server.cpp" />
+    <ClCompile Include="LSX_Server_Main.cpp" />
     <ClCompile Include="LSX_Socket.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

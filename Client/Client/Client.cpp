@@ -4,8 +4,47 @@
 #include "stdafx.h"
 #include <WINSOCK2.H>
 #include <STDIO.H>
-
+#include <iostream>
+using namespace std;
 #pragma  comment(lib,"ws2_32.lib")
+
+
+
+int HexToInt(byte arry[], int postion)//big ´ó¶Ë
+{
+	int value;
+	value = (int)((arry[postion + 3] & 0xFF)
+		| ((arry[postion + 2] << 8) & 0xFF00)
+		| ((arry[postion + 1] << 16) & 0xFF0000)
+		| ((arry[postion + 0] << 24) & 0xFF000000));
+	return value;
+}
+
+
+void Analysis(char recData[])
+{
+	int id;
+	char *p;
+	p = recData;
+	char tmp[4];
+	int i;
+
+	for (i = 0; i < 144; i++)
+	{
+		printf("%02x:",(byte)recData[i]);
+		//cout << "=================" << tmp[i] << endl;
+	}
+
+	printf("\n");
+	printf("½âÂë£º");
+	printf("%d", HexToInt((byte*)recData,0));
+	printf("%d", HexToInt((byte*)recData, 4));
+	printf("%d", HexToInt((byte*)recData, 8));
+	printf("%d", HexToInt((byte*)recData, 12));
+	for (int i = 16; i < 144;i++)
+	printf("%c",recData[i]);
+	
+}
 
 
 int main(int argc, char* argv[])
@@ -46,6 +85,8 @@ int main(int argc, char* argv[])
 			recData[ret] = 0x00;
 			printf(recData);
 		}
+	//	if ()
+		Analysis(recData);
 		getchar();
 	}
 	
@@ -53,4 +94,5 @@ int main(int argc, char* argv[])
 	WSACleanup();
 	return 0;
 }
+
 
