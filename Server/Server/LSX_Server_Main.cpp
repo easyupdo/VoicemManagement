@@ -12,10 +12,10 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {	
-	int num = 111;
+	//int num = 111;
 	LSX_message_control message("abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefgh",800,0);
-	message.test(num);
-	cout << "numtest=====" << num << endl;
+//	message.test(num);
+	//cout << "numtest=====" << num << endl;
 	
 	
 	message.socketControl.LSX_WSA_Init();

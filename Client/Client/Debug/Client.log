@@ -1,16 +1,18 @@
-﻿生成启动时间为 2017/6/1 16:13:15。
+﻿生成启动时间为 2017/6/2 18:40:53。
      1>项目“G:\FromZero\Server\Client\Client\Client.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
-         D:\Embedded_Development\VS2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\Client.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Client.cpp
+         D:\Embedded_Development\VS2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\Client.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Client.cpp
          Client.cpp
-     1>g:\fromzero\server\client\client\client.cpp(26): warning C4101: “id”: 未引用的局部变量
-     1>g:\fromzero\server\client\client\client.cpp(29): warning C4101: “tmp”: 未引用的局部变量
+     1>g:\fromzero\server\client\client\client.cpp(118): warning C4101: “id”: 未引用的局部变量
+     1>g:\fromzero\server\client\client\client.cpp(121): warning C4101: “tmp”: 未引用的局部变量
        Link:
          D:\Embedded_Development\VS2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"G:\FromZero\Server\Client\Debug\Client.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"G:\FromZero\Server\Client\Debug\Client.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"G:\FromZero\Server\Client\Debug\Client.lib" /MACHINE:X86 Debug\Client.obj
+         Debug\md5.obj
+         Debug\message.obj
          Debug\stdafx.obj
          Client.vcxproj -> G:\FromZero\Server\Client\Debug\Client.exe
      1>已完成生成项目“G:\FromZero\Server\Client\Client\Client.vcxproj”(Build 个目标)的操作。
 
 生成成功。
 
-已用时间 00:00:13.10
+已用时间 00:00:07.66

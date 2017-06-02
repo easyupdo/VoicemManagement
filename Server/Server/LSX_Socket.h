@@ -24,7 +24,6 @@ typedef struct Msg_Command800//800 command
 	int m800Body_length;
 	//char clear_text[CLEAR_TEXT_LENGTH];
 	string m800Body;
-	Msg_Head mHead;
 }Msg_Command800;                                      
 
 typedef struct Msg_Command801
@@ -32,8 +31,7 @@ typedef struct Msg_Command801
 	int m801_summary_length;//4Byte
 	byte m801serverRemark[16];//16Byte //need a 16HexToString 32*4bit>>16Byte String
 	int m801Body_length;//4Byte
-	string m801Body;//801
-	Msg_Head m801Head;
+	string m801Body;//801明文 128byte
 
 }Msg_Command801;
 
@@ -42,7 +40,7 @@ typedef struct Msg_Result801
 	int time_length;
 	byte time[17];
 	int remark_length;
-	byte voiceRemark[4];
+	byte voiceRemark[16];
 }Msg_Result801;
 
 typedef struct Msg_Command802
@@ -127,7 +125,8 @@ typedef struct Msg_Command809
 
 typedef struct allMsgInfo
 {
-	Msg_Head mHead;
+	Msg_Head mHead;// 目前仅仅用于调试800cmd  其他 各命令直接在初始化是生成
+
 	Msg_Command800 mC800Body;
 	Msg_Command801 mC801Body;
 	Msg_Result801  mR801Body;
@@ -141,8 +140,6 @@ typedef struct allMsgInfo
 	Msg_Command808 mC808Body;
 	Msg_Command809 mC809Body;
 	
-
-
 }allMsgIngo;
 
 
@@ -201,15 +198,32 @@ public:
 	void InitMsgBody(string clear_text);
 	void AllMsg(int x);
 
-	void m802CInit();
+	/*time*/
+	char * GetTime();
+	/*CMD init*///++++++++++++++++++++++++
+	void m801CInit();
+	void m801RInit();
+	void m802CInit(int startTimeLength, char startTime[], int stopTimeLength, char stopTime[]);
+	void m802RInit();
+	void m803CInit();
+	void m804CInit(int id,int second);
+	void m805CInit();
+	void m806CInit();
+	void m807CInit();
+	void m808CInit();
+	void m809CInit();
+	
+
+
 
 	/*string operation*/
 	std::string IntToString(int x);
 	int StringToInt(string x);
 
-	void IntToHex(int x);
+	void IntToHex(byte byte_src[], int value);
 	int HexToInt(byte arry[], int postion);
-	void test(int &a);//目前用于测试 方法
+	void MD5Init(int &a);//目前用于测试 方法
+	void test();
 
 	/*message control*/
 	void LSX_SendCmd();
@@ -233,8 +247,11 @@ public:
 
 	string md5ToKey;
 
-	byte byte_src[4];
+	
 
-	byte M[1024];
+	byte M[1024];//command//800测试
+	///char time[18];//time
+
+	byte m802C[60];//802测试
 
 };
