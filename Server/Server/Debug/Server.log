@@ -1,12 +1,12 @@
-﻿生成启动时间为 2017/6/2 17:42:22。
+﻿生成启动时间为 2017/6/5 18:39:25。
      1>项目“G:\FromZero\Server\Server\Server\Server.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          D:\Embedded_Development\VS2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\Server.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt LSX_Socket.cpp
          LSX_Socket.cpp
-     1>g:\fromzero\server\server\server\lsx_socket.cpp(31): warning C4172: 返回局部变量或临时变量的地址
-     1>g:\fromzero\server\server\server\lsx_socket.cpp(408): warning C4715: “LSX_socket_control::LSX_WSA_Init”: 不是所有的控件路径都返回值
-     1>g:\fromzero\server\server\server\lsx_socket.cpp(418): warning C4715: “LSX_socket_control::LSX_Socket”: 不是所有的控件路径都返回值
-     1>g:\fromzero\server\server\server\lsx_socket.cpp(437): warning C4715: “LSX_socket_control::LSX_Listen”: 不是所有的控件路径都返回值
+     1>g:\fromzero\server\server\server\lsx_socket.cpp(199): warning C4101: “time”: 未引用的局部变量
+     1>g:\fromzero\server\server\server\lsx_socket.cpp(542): warning C4715: “LSX_socket_control::LSX_WSA_Init”: 不是所有的控件路径都返回值
+     1>g:\fromzero\server\server\server\lsx_socket.cpp(552): warning C4715: “LSX_socket_control::LSX_Socket”: 不是所有的控件路径都返回值
+     1>g:\fromzero\server\server\server\lsx_socket.cpp(571): warning C4715: “LSX_socket_control::LSX_Listen”: 不是所有的控件路径都返回值
        Link:
          D:\Embedded_Development\VS2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"G:\FromZero\Server\Server\Debug\Server.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"G:\FromZero\Server\Server\Debug\Server.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"G:\FromZero\Server\Server\Debug\Server.lib" /MACHINE:X86 Debug\LSX_md5.obj
          Debug\LSX_Server_Main.obj
@@ -17,4 +17,4 @@
 
 生成成功。
 
-已用时间 00:00:22.06
+已用时间 00:00:16.26

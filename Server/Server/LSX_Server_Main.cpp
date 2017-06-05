@@ -26,7 +26,6 @@ int main(int argc, char* argv[])
 	message.socketControl.LSX_Listen();
 
 	
-
 	//循环接收数据
 	
 	message.socketControl.nAddrlen = sizeof(message.socketControl.remoteAddr);
@@ -36,16 +35,25 @@ int main(int argc, char* argv[])
 		printf("等待连接...\n");
 		message.socketControl.LSX_Accept();
 		printf("接受到一个连接：%s \r\n", inet_ntoa(message.socketControl.remoteAddr.sin_addr));
-
+		
 		//接收数据
 		while (true)
 		{
-		
-			message.LSX_ReceiveData();
+			cout << "接受数据包" << endl;
+		//	message.LSX_ReceiveData();
+			printf("**************************%c", message.revData[0]);
+			if (message.revData[0] == '1')
+				break;
+
+		//	getchar();
+
+			cout << "发送数据包" << endl;
 			message.LSX_SendCmd();
 
 		}
 		message.socketControl.LSX_Close();
+		
+	
 	}
 	message.socketControl.LSX_Close();
 	message.socketControl.LSX_WSA_Clean();

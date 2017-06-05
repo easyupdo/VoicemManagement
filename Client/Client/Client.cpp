@@ -6,6 +6,8 @@
 #include <STDIO.H>
 #include <iostream>
 #include <string.h>
+#include <WinBase.h>
+#include <Windows.h>
 #include "message.h"
 #include "md5.h"
 
@@ -15,8 +17,7 @@ char dbuf[128];
 
 byte m801C[1024];
 byte byte_src[4];
-Msg_Head mhead;
-Msg_Command801 m801CBody;
+
 
 void IntToHex(byte byte_src[], int value)//big  大端
 {
@@ -34,68 +35,6 @@ void IntToHex(byte byte_src[], int value)//big  大端
 }
 
 
-void m801CInit(char mdbuf[])
-{
-	char mark[16];
-	
-	MD5 MD5(mdbuf);
-	string result = MD5.md5();
-	cout << "客户端md5:"<<result<<endl;
-	mark,MD5.getResult();
-
-	m801CBody.m801_summary_length = 16;
-	strcpy((char*)m801CBody.m801serverRemark, (char*)MD5.getResult());
-	m801CBody.m801Body_length = 128;
-	//m801CBody.m801Body = "1234567890";
-
-	mhead.msg_type = 0;
-	mhead.msg_id = 801;
-	mhead.msg_length = 154;
-
-	
-	memset(m801C,0,1024);
-	IntToHex(byte_src, 154);
-	for (int i = 0; i < 4; i++)
-	{
-		m801C[i] = byte_src[i];
-		printf("KKK:%02x\n", m801C[i]);
-	}
-	IntToHex(byte_src, 0);
-	for (int i = 4; i < 8; i++)
-	{
-		m801C[i] = byte_src[i-4];
-		printf("KKK:%02x\n", m801C[i]);
-	}
-	IntToHex(byte_src, 801);
-	for (int i = 8; i < 12; i++)
-	{
-		m801C[i] = byte_src[i-8];
-		printf("KKK:%02x\n", m801C[i]);
-	}
-
-	IntToHex(byte_src, 16);
-	for (int i = 12; i < 16; i++)
-	{
-		m801C[i] = byte_src[i-12];
-		printf("KKK:%02x\n", m801C[i]);
-	}
-
-	//cout << "DDDDD:" << (char*)MD5.getResult() << endl;
-
-	for (int i = 0; i < 16; i++)
-		sprintf((char*)m801C + 16 + i, "%c", (m801CBody.m801serverRemark[i]));
-
-	
-	IntToHex(byte_src, 128);
-	for (int i = 32; i < 36; i++)
-	{
-		m801C[i] = byte_src[i];
-		printf("KKK:%02x\n", m801C[i]);
-	}
-
-	cout << "wocao " << endl;
-
-}
 
 
 
@@ -112,45 +51,187 @@ int HexToInt(byte arry[], int postion)//big 大端
 	return value;
 }
 
-
-void Analysis(char recData[])
+//****************************
+/*
+void m800CInit(int x)
 {
-	int id;
-	char *p;
-	p = recData;
-	char tmp[4];
-	int i;
+	byte byte_src[4];//transform 
+	memset(M, 0, sizeof(M));
+//信息头
 
-	for (i = 0; i < 144; i++)
+	for (int i = 0; i < 12; i++)
 	{
-		printf("%02x:",(byte)recData[i]);
-		//cout << "=================" << tmp[i] << endl;
+		M[i] = Command800head[i];
+	}
+	IntToHex(byte_src, 128);//128   00:00:00:80
+	for (int i = 12; i < 16; i++)
+	{
+		M[i] = byte_src[i - 12];
+		printf("KKK:%02x\n", M[i]);
 	}
 
-	printf("\n");
-	printf("解码：");
-	printf("%d", HexToInt((byte*)recData,0));
-	printf("%d", HexToInt((byte*)recData, 4));
-	printf("%d", HexToInt((byte*)recData, 8));
-	printf("%d", HexToInt((byte*)recData, 12));
 
-	
-	
+	//int X = mInfo.m800Body.m800Body.length();
+	char buf[129];//128+1
+
+	//strcpy(letter, word.c_str());
+	strcpy(buf,);
+
+	cout << "原数据buf:" << buf << endl;
+
+
 	for (int i = 16; i < 144; i++)
 	{
-		dbuf[i - 16] = recData[i];
-		printf("%c", recData[i]);
+		M[i] = buf[i - 16];
 	}
 
-	cout << "++++:" << dbuf << endl;
+	Analysis();
+
 }
+*/
+
+
+//仪>>服务器
+void m801CInit(byte stemp[])
+{
+	string m;
+	for (int i = 0; i < 128; i++)
+	{
+		m[i] = stemp[17 + i];
+	}
+	MD5 MD5(m);
+	string result = MD5.md5();
+	cout << "abc MD5 is:" << result << endl;
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Command800head[i];//801C信息头
+	}
+
+	byte szlength[] = { 0x00, 0x00, 0x00, 0x10 };
+	for (int i = 0; i < 4; i++)
+	{
+		M[i + 12] = szlength[i];//服务器摘要长度 ==16
+	}
+
+	for (int i = 0; i < 16; i++)
+	{
+		M[i + 16] = MD5.getResult()[i];//服务器摘要
+	}
+
+	char mString[] = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678";
+	printf("源数据:");
+	for (int i = 0; i < 128; i++)//明文
+	{
+		M[i + 32] = mString[i];
+		printf("%c", M[i + 32]);
+	}
+	printf("\n");
+
+}
+
+/*
+//服>>仪 摘要 ：通过801 command中的明文 使用rkey加密
+void m801RInit()
+{
+	MD5 MD5("abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefgh");
+	string result = MD5.md5();
+	cout << "abc MD5 is:" << result << endl;
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Result801head[i];
+	}//801R 头信息
+
+	byte time[] = { 0x00, 0x00, 0x00, 0x11 };
+	for (int i = 0; i < 4; i++) //时间长度
+	{
+		M[i + 12] = time[i];
+	}
+	char nowTime[18];
+	GetTime(nowTime);
+	for (int i = 0; i < 17; i++)
+	{
+		M[i + 16] = nowTime[i];
+	}
+	byte czlength[] = { 0x00, 0x00, 0x00, 0x10 };
+	for (int i = 0; i < 4; i++)
+	{
+		M[i + 33] = czlength[i];
+	}
+
+	for (int i = 0; i < 53; i++)
+	{
+		M[i + 47] = MD5.getResult()[i];
+	}
+
+	printf("源数据：");
+	printf("\n");
+	Analysis();
+}
+*/
+/*s
+//服务器>>仪器
+void m802CInit()
+{
+	//用户查询某一时间段中的息信test
+	char time[18];
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Result801head[i];
+	}//801R 头信息
+
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Command802head[i];
+	}//信息头
+	for (int i = 0; i < 3; i++)
+	{
+		M[i + 12] = 0x00;
+	}
+	M[15] = 0x01;//通道数  可更改
+
+	for (int i = 0; i < 3; i++)
+	{
+		M[i + 16] = 0x00;
+	}
+	M[20] = 0x11;
+	char startTime[18];
+	GetTime(startTime);
+	for (int i = 0; i < 17; i++)
+	{
+		M[i + 21] = startTime[i];
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		M[i + 38] = 0x00;
+	}
+	M[39] = 0x01;
+	for (int i = 0; i < 17; i++)
+	{
+		M[i + 40] = startTime[i];
+	}
+
+
+	printf("源数据：");
+	printf("\n");
+	Analysis();
+
+
+}
+*/
+//***************************9
+
+
+
+
 
 
 int main(int argc, char* argv[])
 {
 
 	
-
 
 	WORD sockVersion = MAKEWORD(2, 2);
 	WSADATA data;
@@ -179,26 +260,116 @@ int main(int argc, char* argv[])
 	while (1)
 	{
 		char * sendData = "你好，TCP服务端，我是客户端!\n";
-		send(sclient, sendData, strlen(sendData), 0);
-		send(sclient, (char*)m801C,36, 0);
+		 cout << "发送数据包" << endl;
+		//send(sclient, sendData, strlen(sendData), 0);
+		
 
+		cout << "接受数据包" << endl;
 		char recData[255];
 		int ret = recv(sclient, recData, 255, 0);
 		if (ret > 0)
 		{
-//			recData[ret] = 0x00;
+			//recData[ret] = 0x00;
+			printf("dddddddd\n");
 			printf(recData);
-		}
-	//	if ()
-		Analysis(recData);
-		m801CInit(dbuf);
-		getchar();
+			byte stemp[16];
+			for (int i = 0; i < 16; i++)
+				stemp[i + 16] = recData[i+16];
+		
+			
 
+			Analysis((byte*)recData);
+			char m[128];
+			for (int i = 0; i < 128; i++)
+			{
+				m[i] = recData[i + 17];
+			}
+			m801CInit(m);
+
+		}
+
+
+
+	//	if ()
+
+		//send(sclient, (char*)m801C, 164, 0);
+		cout << "over or not?  1:over" << endl;
+		int n;
+		if (cin >> n)
+		{
+			char exitBuf[2] = {'1'};
+			send(sclient, exitBuf, 1, 0);
+			cout << "exitBuf:" << exitBuf << endl;
+			//getchar();
+			break;
+		}
 	}
+	cout << "OVER" << endl;
 	
+	Sleep(2);
 	closesocket(sclient);
 	WSACleanup();
 	return 0;
 }
 
 
+void Analysis(byte M[])
+{
+	//head
+	printf("信息头：");
+	for (int i = 0; i <16; i++)
+		printf("%02x:", M[i]);
+
+	printf("\n");
+	printf("数据：");
+	printf("body: ");
+	//msg body
+	for (int i = 16; i < 144; i++)
+		printf("%02x：", M[i]);
+
+
+	//To String
+	printf("\n");
+	//cout << "allMsg:%c" << M << endl;
+	printf("解析allMsg:%s", M);
+
+
+	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 0));
+	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 4));
+	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 8));
+
+	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 12));
+}
+
+
+
+void Analysis801C()
+{
+	//Analysis();//
+	for (int i = 0; i < 16; i++)
+	{
+	}
+
+
+}
+
+void GetTime(char time[])
+{
+	//声明变量
+	SYSTEMTIME sys_time;
+	//BUG
+	//将变量值设置为本地时间
+	GetLocalTime(&sys_time);
+
+	//char time[18];//生成时间字符串
+	sprintf(time, "%04d", sys_time.wYear);//year
+	sprintf(time + 4, "%02d", sys_time.wMonth);
+	sprintf(time + 6, "%02d", sys_time.wDay);
+	sprintf(time + 8, "%02d", sys_time.wHour);
+	sprintf(time + 10, "%02d", sys_time.wMinute);
+	sprintf(time + 12, "%02d", sys_time.wSecond);
+	sprintf(time + 14, "%s", "000");
+	cout << "时间:" << time << endl;
+	cout << "时间:" << (byte*)time << endl;
+	
+}

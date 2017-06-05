@@ -10,7 +10,7 @@
 using namespace std;
 
 
-char* LSX_message_control::GetTime()
+char* LSX_message_control::GetTime(char time[])
 {
 	//ÉùÃ÷±äÁ¿
 	SYSTEMTIME sys_time;
@@ -18,7 +18,7 @@ char* LSX_message_control::GetTime()
 	//½«±äÁ¿ÖµÉèÖÃÎª±¾µØÊ±¼ä
 	GetLocalTime(&sys_time);
 	
-	char time[18];//Éú³ÉÊ±¼ä×Ö·û´®
+	//char time[18];//Éú³ÉÊ±¼ä×Ö·û´®
 	sprintf(time, "%04d", sys_time.wYear);//year
 	sprintf(time + 4, "%02d", sys_time.wMonth);
 	sprintf(time + 6, "%02d", sys_time.wDay);
@@ -39,32 +39,118 @@ LSX_message_control::LSX_message_control(string clear_text, int id, int type)//²
 	mInfo.mC800Body.m800Body = clear_text;
 	cout << "Body_length:" << mInfo.mC800Body.m800Body_length << endl;
 	int msg_length = InitMsgHead(id, type);
-	AllMsg(msg_length);
+	m800CInit(msg_length);
 	
-	/*801 Command*/
-
-	/*801 Result*/
+	/*
+	m801CInit();
 	m801RInit();
-	test();
-	
-	/*802*/
-	//m802CInit();
-	/*803...*/
 
+	m802CInit();
+	m803CInit();
+	m804CInit(1,15);
+	m805CInit();
+	//m806CInit();
+	m807CInit();
+	m808CInit();
+	m809CInit();
 
+	*/
 
 
 }
-/*
-//ÒÇ>>·ş ÕªÒª£º¾­¹ıskey¶Ô800¼ÓÃÜ   //¿Í»§¶Ë¹¦ÄÜ
+
+
+void LSX_message_control::m800CInit(int x)
+{
+	byte byte_src[4];//transform 
+	memset(M, 0, sizeof(M));
+	/*IntToHex(byte_src, x);//144  00£º00£º00£º90
+	for (int i = 0; i < 4; i++)
+	{
+		M[i] = byte_src[i];
+		printf("KKK:%02x\n", M[i]);
+	}
+
+
+	IntToHex(byte_src, mInfo.mHead.msg_type);//0
+	for (int i = 4; i < 8; i++)
+	{
+		M[i] = byte_src[i - 4];
+		printf("KKK:%02x\n", M[i]);
+	}
+
+
+	IntToHex(byte_src, mInfo.mHead.msg_id);//800   00£º00£º00£º03£º20
+	for (int i = 8; i < 12; i++)
+	{
+		M[i] = byte_src[i - 8];
+		printf("KKK:%02x\n", M[i]);
+	}//ĞÅÏ¢Í·
+	*/
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Command800head[i];
+	}
+	IntToHex(byte_src, mInfo.mC800Body.m800Body_length);//128   00:00:00:80
+	for (int i = 12; i < 16; i++)
+	{
+		M[i] = byte_src[i - 12];
+		printf("KKK:%02x\n", M[i]);
+	}
+
+
+	//int X = mInfo.m800Body.m800Body.length();
+	char buf[129];//128+1
+
+	//strcpy(letter, word.c_str());
+	strcpy(buf, mInfo.mC800Body.m800Body.c_str());
+
+	cout << "Ô­Êı¾İbuf:" << buf << endl;
+
+
+	for (int i = 16; i < 144; i++)
+	{
+		M[i] = buf[i - 16];
+	}
+
+	Analysis();
+
+}
+
+
+
 void LSX_message_control::m801CInit()
 {
-	mInfo.mC801Body.m801_summary_length =16;//16byte
-	mInfo.mC801Body.m801serverRemark;
-	mInfo.mC801Body.m801Body_length;
-	mInfo.mC801Body.m801Body;
+	MD5 MD5("abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefgh");
+	string result = MD5.md5();
+	cout << "abc MD5 is:" << result << endl;
+	memset(M,0,1024);
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Command801head[i];//801CĞÅÏ¢Í·
+	}
+
+	byte szlength[] = {0x00,0x00,0x00,0x10};
+	for (int i = 0; i < 4; i++)
+	{
+		M[i + 12] = szlength[i];//·şÎñÆ÷ÕªÒª³¤¶È ==16
+	}
+
+	for (int i = 0; i < 16; i++)
+	{
+		M[i + 16] = MD5.getResult()[i];//·şÎñÆ÷ÕªÒª
+	}
+
+	char mString[] = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678";
+	printf("Ô´Êı¾İ:");
+	for (int i = 0; i < 128; i++)//Ã÷ÎÄ
+	{
+		M[i + 32] = mString[i];
+		printf("%c",M[i+32]);
+	}
+	printf("\n");
+	Analysis();
 }
-*/
 
 //·ş>>ÒÇ ÕªÒª £ºÍ¨¹ı801 commandÖĞµÄÃ÷ÎÄ Ê¹ÓÃrkey¼ÓÃÜ
 void LSX_message_control::m801RInit()
@@ -72,45 +158,86 @@ void LSX_message_control::m801RInit()
 	MD5 MD5("abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefgh");
 	string result = MD5.md5();
 	cout << "abc MD5 is:" << result << endl;
-	mInfo.mR801Body.time_length = 17;////17Byte
-	strcpy((char*)(mInfo.mC802Body.start_time), GetTime());//µ±Ç°Ê±¼ä ·¢ËÍ¸ø ÒÇ
-	mInfo.mR801Body.remark_length = 16;//16Byte
-	strcpy((char*)(mInfo.mR801Body.voiceRemark), (char*)MD5.getResult());//±£´æµÄÊÇ16½øÖÆ
-	
-	char buf[33];
-	for (int i = 0; i<16; i++)
-		sprintf(buf + i * 2, "%02x", mInfo.mR801Body.voiceRemark[i]);//½«16ByteµÄ16½øÖÆµÄÕªÒª×ªÎª×Ö·û´®Êä³ö
-	buf[32] = 0; //½«16½øÖÆ×ª×Ö·ûÊä³ö
+	memset(M,0,1024);
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Result801head[i];
+	}//801R Í·ĞÅÏ¢
 
-		cout << "·şÎñÆ÷ÑéÖ¤md5£º" << buf<< endl;
+	byte time[] = {0x00,0x00,0x00,0x11};
+	for (int i = 0; i < 4; i++) //Ê±¼ä³¤¶È
+	{
+		M[i+12] = time[i];
+	}
+	char nowTime[18];
+	GetTime(nowTime);
+	for (int i = 0; i < 17; i++)
+	{
+		M[i + 16] = nowTime[i];
+	}
+	byte czlength[] = { 0x00, 0x00, 0x00, 0x10 };
+	for (int i = 0; i < 4; i++)
+	{
+		M[i + 33] = czlength[i];
+	}
 
+	for (int i = 0; i < 53; i++)
+	{
+		M[i + 47] = MD5.getResult()[i];
+	}
 
-		cout << "+++++++++++++++++++++++++++++++++++++++++++" << endl;
-		strcpy((char*)(mInfo.mC802Body.start_time), GetTime());//start serach time //17byte
-		cout << "¿ªÊ¼Ê±¼ä£º" << mInfo.mC802Body.start_time << endl;
+	printf("Ô´Êı¾İ£º");
+	printf("\n");
+	Analysis();
 }
 
 
 //·şÎñÆ÷>>ÒÇÆ÷
-void LSX_message_control:: m802CInit(int startTimeLength,char startTime[],int stopTimeLength,char stopTime[])
+void LSX_message_control:: m802CInit()
 {
 	//ÓÃ»§²éÑ¯Ä³Ò»Ê±¼ä¶ÎÖĞµÄÏ¢ĞÅtest
-	mInfo.mC802Body.channel = 1;
-	strcpy((char*)(mInfo.mC802Body.start_time), GetTime());//start serach time //17byte
-	cout << "¿ªÊ¼Ê±¼ä£º" << mInfo.mC802Body.start_time << endl;
-	mInfo.mC802Body.start_time_length = startTimeLength;
-	mInfo.mC802Body.stop_time_length=stopTimeLength;
-	strcpy((char*)(mInfo.mC802Body.start_time), GetTime());//over serach time //17byte
-	mInfo.mC802Body.stop_time;
+	char time[18];
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Result801head[i];
+	}//801R Í·ĞÅÏ¢
+
+	for (int i = 0; i < 12; i++)
+	{
+		M[i] = Command802head[i];
+	}//ĞÅÏ¢Í·
+	for (int i = 0; i < 3; i++)
+	{
+		M[i+12] = 0x00;
+	}
+	M[15] = 0x01;//Í¨µÀÊı  ¿É¸ü¸Ä
+
+	for (int i = 0; i < 3; i++)
+	{
+		M[i + 16] = 0x00;
+	}
+	M[20] = 0x11;
+	char startTime[18];
+	GetTime(startTime);
+	for (int i = 0; i < 17;i++)
+	{
+		M[i + 21] = startTime[i];
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		M[i + 38] = 0x00;
+	}
+	M[39] = 0x01;
+	for (int i = 0; i < 17; i++)
+	{
+		M[i + 40] = startTime[i];
+	}
 
 
-	Msg_Head m802Head;
-	m802Head.msg_id = 802;
-	m802Head.msg_type = 0;
-	m802Head.msg_length = 58;
-
-	
-
+	printf("Ô´Êı¾İ£º");
+	printf("\n");
+	Analysis();
 
 
 }
@@ -131,46 +258,124 @@ void LSX_message_control::m802RInit()
 void LSX_message_control::m803CInit()
 {
 	//NO body
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12;i++)
+	M[i] = Command803head[i];
+
+
+	printf("Ô´Êı¾İ£º");
+	printf("\n");
+	Analysis();
 }
 
 //·şÎñÆ÷>>ÒÇÆ÷  »ñÈ¡¾ßÌåÄ³Ò»ÌõidµÄÓïÒô¼ÇÂ¼ĞÅÏ¢
 void LSX_message_control::m804CInit(int id,int second)
 {
-	mInfo.mC804Body.recoder_id=id;//Ë÷Òı 1-100
-	mInfo.mC804Body.time_offset = second;//Ãë
+	
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+		M[i] = Command804head[i];//Í·ĞÅÏ¢
+	
+	byte byte_src[4];
+	IntToHex(byte_src,id);//Òª²éÑ¯Ò»ÌõµÄid
+	for (int i = 0; i < 4; i++)
+	{
+		M[i+12] = byte_src[i];
+	}
+
+	IntToHex(byte_src,second);//Ò»Ìõ¼ÇÂ¼µÄÊ±¼ä µ¥Î»ÎªËµ
+
+	for (int i = 0; i < 4; i++)
+	{
+		M[i + 16] = byte_src[i];
+	}
+
+	printf("Ô´Êı¾İ£º");
+	printf("\n");
+	Analysis();
+
 }
 
 //ÒÇÆ÷>>·şÎñÆ÷  Í¨Öª·şÎñÆ÷²éÑ¯¾ßÌåidÓïÒô¼ÇÂ¼µÄ½á¹û
 void LSX_message_control::m805CInit()
 {
-	mInfo.mC805Body.result;
-	mInfo.mC805Body.file_length;
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+		M[i] = Command805head[i];
+	for (int i = 0; i < 3; i++)
+		M[i+12] = 0x00;
+	M[15] = 0x01;//»ØÀ¡ÕıÈ·»¹ÊÇ´íÎó  Ò»¹²Á½¸öÖµ 1£ºÕıÈ·2£º´íÎó
+
+	byte byte_src[4];
+	IntToHex(byte_src,12);//½«ÎÄ¼ş³¤¶È×ª»»Îª16½øÖÆ´æ´¢
+	for (int i = 0; i < 4; i++)
+	{
+		M[i+16] = byte_src[i];
+	}
+
+	printf("Ô´Êı¾İ£º");
+	printf("\n");
+	Analysis();
+
+
 
 }
 
 //ÒÇÆ÷>>·şÎñÆ÷  ·¢ËÍÓïÒôĞÅÏ¢
 void LSX_message_control::m806CInit()
 {
-	
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+		M[i] = Command803head[i];
+	byte byte_src[4];
+	IntToHex(byte_src,50);//ÓïÒôÊı¾İ³¤¶È byte
+	//for ()
 }
 
 
 //ÒÇÆ÷>>·şÎñÆ÷ Í¨Öª·şÎñÆ÷½áÊø
 void LSX_message_control::m807CInit()
 {
-	mInfo.mC807Body.data;//1 over 2 exception over
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+		M[i] = Command807head[i];
+	for (int i = 0; i < 3; i++)
+		M[i + 12] = 0x00;
+	M[15] = 0x01;// 1Õı³£½áÊø´«ËÍ  2:Òì³£ÖÕÖ¹
+	//1 over 2 exception over
+
+	printf("Ô´Êı¾İ£º");
+	printf("\n");
+	Analysis();
+
 }
 
 
 //·şÎñÆ÷>>ÒÇÆ÷ Í¨ÖªÓïÒô¼ÇÂ¼ÒÇÍ£Ö¹´«ËÍÓïÒôÊı¾İ
 void LSX_message_control::m808CInit()
 {
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+		M[i] = Command808head[i];
+
+	printf("Ô´Êı¾İ£º");
+	printf("\n");
+	Analysis();
 
 }
 
 
 //·şÎñÆ÷>>ÒÇÆ÷	ĞÄÌø°ü
-void LSX_message_control::m809CInit(){}
+void LSX_message_control::m809CInit()
+{
+	memset(M, 0, 1024);
+	for (int i = 0; i < 12; i++)
+		M[i] = Command809head[i];
+
+	printf("Ô´Êı¾İ£º");
+	printf("\n");
+	Analysis();
+}
 
 
 
@@ -202,78 +407,7 @@ int LSX_message_control:: StringToInt(string x)
 
 
 
-void LSX_message_control::AllMsg(int x)
-{
-	byte byte_src[4];//transform 
-	memset(M,0,sizeof(M));
-	IntToHex(byte_src,x);//144  00£º00£º00£º90
-	for (int i = 0; i < 4; i++)
-	{
-		M[i] = byte_src[i];
-		printf("KKK:%02x\n", M[i]);
-	}
-		
 
-	IntToHex(byte_src,mInfo.mHead.msg_type);//0
-	for (int i = 4; i < 8; i++)
-	{
-		M[i] = byte_src[i-4];
-		printf("KKK:%02x\n", M[i]);
-	}
-		
-
-	IntToHex(byte_src,mInfo.mHead.msg_id);//800   00£º00£º00£º03£º20
-	for (int i = 8; i < 12; i++)
-	{
-		M[i] = byte_src[i-8];
-		printf("KKK:%02x\n", M[i]);
-	}
-
-	IntToHex(byte_src,mInfo.mC800Body.m800Body_length);//128   00:00:00:80
-	for (int i = 12; i < 16; i++)
-	{
-		M[i] = byte_src[i-12];
-		printf("KKK:%02x\n", M[i]);
-	}
-
-	
-	//int X = mInfo.m800Body.m800Body.length();
-	char buf[129];//128+1
-
-	//strcpy(letter, word.c_str());
-	strcpy(buf, mInfo.mC800Body.m800Body.c_str());
-
-	cout << "buf:" <<buf<< endl;
-
-
-	for (int i = 16; i < 144; i++)
-	{
-		M[i] = buf[i-16];
-	}
-	//head
-	for (int i =0; i <16;i++)
-	printf("%02x:",M[i]);
-
-	printf("\n");
-	printf("body: ");
-	//msg body
-	for (int i = 16; i < 144; i++)
-		printf("%02x£º",M[i]);
-
-
-	//To String
-	
-	//cout << "allMsg:%c" << M << endl;
-	printf("allMsg:%s",M);
-
-	
-	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 0));
-	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 4));
-	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 8));
-
-	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 12));
-	
-}
 
 void  LSX_message_control::IntToHex(byte byte_src[], int value)//big  ´ó¶Ë
 {
@@ -460,7 +594,7 @@ void LSX_message_control::LSX_ReceiveData()
 		printf("%02x:", (byte)revData[i]);
 		//cout << "=================" << tmp[i] << endl;
 	}
-
+	//½âÎöĞÅÏ¢Í·
 	printf("\n");
 	printf("½âÂë£º");
 	printf("%d", HexToInt((byte*)revData, 0));
@@ -468,16 +602,27 @@ void LSX_message_control::LSX_ReceiveData()
 	printf("%d", HexToInt((byte*)revData, 8));
 	printf("%d", HexToInt((byte*)revData, 12));
 
+	
 
+	//½âÎöbody
 	/*
-	for (int i = 16; i < 144; i++)
+	char dbuf[33];
+	for (int i = 0; i<16; i++)
+		sprintf(dbuf + i * 2, "%02x", revData[i+16]);//½«16ByteµÄ16½øÖÆµÄÕªÒª×ªÎª×Ö·û´®Êä³ö
+	dbuf[32] = 0;
+
+	*/
+
+	for (int i = 16; i < 36; i++)
 	{
-		dbuf[i - 16] = revData[i];
-		printf("%c", revData[i]);
+		printf("%02x:", revData[i]);
 	}
 
-	cout << "++++:" << dbuf << endl;
-	*/
+	//802
+	for (int i = 36; i < 165; i++)
+		printf("%c:",revData[i]);
+	//cout << "++++:" << dbuf << endl;
+	
 
 }
 
@@ -496,3 +641,31 @@ void LSX_socket_control::LSX_WSA_Clean()
 	WSACleanup();
 }
 
+
+void LSX_message_control::Analysis()
+{
+	//head
+	printf("ĞÅÏ¢Í·£º");
+	for (int i = 0; i <16; i++)
+		printf("%02x:", M[i]);
+
+	printf("\n");
+	printf("Êı¾İ£º");
+	printf("body: ");
+	//msg body
+	for (int i = 16; i < 144; i++)
+		printf("%02x£º", M[i]);
+
+
+	//To String
+	printf("\n");
+	//cout << "allMsg:%c" << M << endl;
+	printf("½âÎöallMsg:%s", M);
+
+
+	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 0));
+	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 4));
+	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 8));
+
+	printf("++++++++++++++++++++++++++++%d\n", HexToInt(M, 12));
+}

@@ -11,6 +11,25 @@ using namespace std;
 
 #define msg_request_comm 800
 #define msg_request_return 801
+const byte Command800head[] = { 0x00, 0x00, 0x00, 0x90, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x20 };
+const byte Command801head[] = { 0x00, 0x00, 0x00, 0xa4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x21 };
+const byte Result801head[] = { 0x00, 0x00, 0x00, 0x35, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x03, 0x21 };
+const byte Command802head[] = { 0x00, 0x00, 0x00, 0x3a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x22 };
+const byte Command803head[] = { 0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x23 };
+const byte Command804head[] = { 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x24 };
+const byte Command805head[] = { 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x25 };
+
+const byte Command807head[] = { 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x27 };
+const byte Command808head[] = { 0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x28 };
+const byte Command809head[] = { 0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x29 };
+
+
+
+
+
+//const byte Command802Chead[] = {};
+
+
 
 typedef struct Msg_Head
 {
@@ -128,6 +147,7 @@ typedef struct allMsgInfo
 	Msg_Head mHead;// 目前仅仅用于调试800cmd  其他 各命令直接在初始化是生成
 
 	Msg_Command800 mC800Body;
+	
 	Msg_Command801 mC801Body;
 	Msg_Result801  mR801Body;
 	Msg_Command802 mC802Body;
@@ -140,7 +160,7 @@ typedef struct allMsgInfo
 	Msg_Command808 mC808Body;
 	Msg_Command809 mC809Body;
 	
-}allMsgIngo;
+}allMsgInfo;
 
 
 
@@ -199,11 +219,12 @@ public:
 	void AllMsg(int x);
 
 	/*time*/
-	char * GetTime();
+	char * GetTime(char time[]);
 	/*CMD init*///++++++++++++++++++++++++
+	void m800CInit(int msg_length);
 	void m801CInit();
 	void m801RInit();
-	void m802CInit(int startTimeLength, char startTime[], int stopTimeLength, char stopTime[]);
+	void m802CInit();
 	void m802RInit();
 	void m803CInit();
 	void m804CInit(int id,int second);
@@ -224,6 +245,7 @@ public:
 	int HexToInt(byte arry[], int postion);
 	void MD5Init(int &a);//目前用于测试 方法
 	void test();
+	void Analysis();
 
 	/*message control*/
 	void LSX_SendCmd();
@@ -235,7 +257,7 @@ public:
 	{}
 
 	/**/
-	allMsgIngo mInfo;
+	allMsgInfo mInfo;
 	string allMsg;
 	string m801Msg;
 
@@ -250,8 +272,9 @@ public:
 	
 
 	byte M[1024];//command//800测试
+	
 	///char time[18];//time
-
+	
 	byte m802C[60];//802测试
 
 };
